@@ -16,7 +16,7 @@
     <div v-if="sortWayShow" class="divc showcata2 border-top" style="display: block"
          @click="clickSortWay($event, 'sortWay')">
       <ul>
-        <li v-for="(item,index) in menuSon.sortWay"><a href="javascript:;" :data-index="index" v-text="item.name"></a>
+        <li v-for="(item,index) in sortWay"><a href="javascript:;" :data-index="index" v-text="item.name"></a>
         </li>
         <!--<li><a href="javascript:;" selectid="1">热门排序</a></li>-->
         <!--<li><a href="javascript:;" selectid="2">价格从低到高</a></li>-->
@@ -32,8 +32,12 @@
     props: ['menuSon'],  // 不允许直接操作props中的数据，最好进行深拷贝给自身数据对象
     data: function () {
       return {
-        sortWay: JSON.parse(JSON.stringify(this.menuSon.sortWay)),
         sortWayShow: false
+      }
+    },
+    computed: {
+      sortWay: function () {
+        return typeof this.menuSon === "object" ? JSON.parse(JSON.stringify(this.menuSon.sortWay)) : {};
       }
     },
     methods: {
