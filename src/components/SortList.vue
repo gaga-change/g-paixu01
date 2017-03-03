@@ -207,16 +207,24 @@
           itemMapNow.page += 1;
           page = itemMapNow.page;
         }
+        console.log(self.query);
         var body = {
           "accurateMap": {
             "goods_type": ["2"],
-            "game_id": ["YX16053120241378200001"],
-            "server_id": ["YXF16053120333100500020"],
-            "region_id": ["YXQ16053120274791000015"]
-          }, "keyWordMap": {}, "betweenMap": {}, "page": 1  , "pageCount": 20, "sortMap": {"goods_source_type": "+"}
+            "game_id": [self.query.gid],
+            "server_id": [self.query.serverid],
+            "region_id": [self.query.areaid]
+          }, "keyWordMap": {}, "betweenMap": {},
+          "page": page,
+          "pageCount": pageCount,
+          "sortMap": itemMapNow.sortMap
         };
         var url = "/api//mobile-goodsSearch-service/rs/goodsSearch/goodsSearchList";
         this.httpPost(url, body).then(function (res) {
+          if (!res.data.success) {
+            console.log("服务器返回说'请求失败！'应该是参xiao数fei给少了");
+            return
+          }
           var getItems = JSON.parse(res.data.result);
           if (getItems.items.length == 0) {
             console.log("数据请求完了。")
