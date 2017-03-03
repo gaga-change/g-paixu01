@@ -158,6 +158,7 @@
        * @param menuItem 当前点击的菜单项
        */
       setCheckedSort: function (menuItem) {
+        if(this.menuSon.checkedSort.name == menuItem.name)return;
         console.log(menuItem);
         this.menuSon.checkedSort = menuItem;
         this.updataTop();
