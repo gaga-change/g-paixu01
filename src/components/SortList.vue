@@ -82,7 +82,7 @@
          *           items: [] 当前排序下的数据项
          *        }
          * */
-        itemMap: null
+        itemMap: []
       }
     },
     created: function () {
@@ -171,7 +171,31 @@
        *
        */
       _getHttpPostListUpdata: function (way) {
+//        * 参数一 ：top/bottom  参数二 ： 保留
+//        * 先获取到选中菜单
+//        * 根据选中的菜单找到数组中存放数据的对象，如果不存在则创建,改方式为bottom
+//        * 根据数据对象，判定page和pageCount的值,如果为 top，设 0和 1
+//        * 根据当前的资料，凑成一个 body
+//        * 根据这个body,调用post请求方法，获取数据
+//        * 把数据合并到当前的数据对象的数组中
+//        * bottom
+//        * 	追加到后面，如果重复，不消除重复。但页内显示。功能待定
+//        * top
+//        * 	追加到前面，如果有缺失，不消除列表数据，正常显示。功能待定
+//        * 返回一个 promise
+        var self = this;
         if (!way) way = 'bottom';
+        var checkedSort = self.menuSon.checkedSort;
+        var itemMapNow = null; // 表示当前需要显示的数据的对象
+        self.itemMap.map(function (val, index) {
+          if (val.name == checkedSort.name)
+            itemMapNow = val;
+        })
+        if (!itemMapNow) { // 没缓存
+          way = "bottom"
+          itemMapNow = JSON.parse(JSON.stringify(checkedSort));
+          self.itemMap.push(itemMapNow);
+        }
         var body = {
           "accurateMap": {
             "goods_type": ["2"],
@@ -182,7 +206,7 @@
         };
         var url = "/api//mobile-goodsSearch-service/rs/goodsSearch/goodsSearchList";
         this.httpPost(url, body).then(function (res) {
-          console.log(res);
+          console.log("------start------- \n 请求方式:", way, "\n 数据对象:", res, "---------end-------- \n");
         })
       },
 
