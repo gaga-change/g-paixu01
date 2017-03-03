@@ -29,17 +29,17 @@
 
 <script>
   export default  {
-    props: ['menuSon'],
+    props: ['menuSon'],  // 不允许直接操作props中的数据，最好进行深拷贝给自身数据对象
     data: function () {
       return {
-        sortWay: this.menuSon.sortWay,
+        sortWay: JSON.parse(JSON.stringify(this.menuSon.sortWay)),
         sortWayShow: false
       }
     },
     methods: {
       clickSortWay: function (e) {
         this.sortWayShow = false;
-        this.clickMenu(this.menuSon.sortWay[e.target.attributes['data-index'].value]);
+        this.clickMenu(this.sortWay[e.target.attributes['data-index'].value]);
       },
       clickMenu: function (item) {
         this.$emit('clickMenu', item);

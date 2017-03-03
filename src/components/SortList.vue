@@ -27,7 +27,6 @@
     <div class="czg-float">
       <a href="../phb/Leaderboard.html"></a>
     </div>
-
   </div>
 </template>
 
@@ -78,9 +77,9 @@
       'vue-menu': Menu,
       'vue-list': List
     },
-    methods: {
+    methods: { // 对数据进行操作的方法只能是get/set方法，同时get/set 不允许内部调用其它的方法。
       /**
-       * 从链接中提取参数
+       * 从链接中提取url中“？”后的参数
        * */
       setQuery: function () {
         this.query = this.$route.query;
@@ -114,8 +113,17 @@
             }]
         }
       },
+      /**
+       *  获取请求列表数据的body参数
+       */
+      getHttpPostListBody: function () {
+
+      },
+      httpPostList: function () {
+
+      },
       clickMenu: function (item) {
-        console.log(item);
+
       }
     }
   }
