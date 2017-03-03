@@ -1,9 +1,11 @@
 <template>
   <div id="pageWrapper">
+
     <!-- top -->
     <div class="fw fixed " style="z-index:39;">
       <!-- 头部 -->
-      {{menuSon}}
+      <button @click="updataTop()">TOP 更新</button>
+      <button @click="updataBottom()">Bottom 追加</button>
       <vue-head>
         <span v-text="query.gname"></span><span v-if="query.areaname">/</span>
         <span v-text="query.areaname"></span><span v-if="query.servername">/</span>
@@ -32,10 +34,12 @@
 </template>
 
 <script>
-
+  import Vue from 'vue'
+  import VueRousource from 'vue-resource'
   import Head from './SortList_Head.vue'
   import Menu from './SortList_Menu.vue'
   import List from './SortList_List.vue'
+  Vue.use(VueRousource);
   export default {
     name: "SortList",
     data: function () {
@@ -68,7 +72,7 @@
          *    sortWay <Array [Object]>
          * }
          */
-        menuSon: {checkedSort:{name: ''}},
+        menuSon: {checkedSort: {name: ''}},
         /**
          *  所有列表数据
          *    listArray <Array [Object]>
@@ -81,24 +85,13 @@
         itemMap: null
       }
     },
-    watch: {
-      menuSon: function (val, oldVal) {
-//        console.log("监听menuSon", val, oldVal);
-      }
-    },
-    computed: {
-
-      menuName: function () {
-        if (this.menuSon === null) return [''];
-        return [this.menuSon.checkedSort.name];
-      }
-    },
     created: function () {
       var self = this;
       // 保证在set的方法里设置的值必须正确，确保数据源头结构改变时不会动全身
       this.setQuery();
       this.setMenu().then(function () {
         console.log("菜单对象获取完成", self.menuSon);
+        self.updataBottom()
       });
     },
     components: {
@@ -107,12 +100,14 @@
       'vue-list': List
     },
     methods: { // 对数据进行操作的方法只能是get/set方法。异步get/set返回的是promise对象
+
       /**
        * （同步） 从链接中提取url中“？”后的参数
        * */
       setQuery: function () {
         this.query = this.$route.query;
       },
+
       /**
        * （异步） 手动配置子菜单
        */
@@ -157,19 +152,17 @@
         })
 
       },
+
       /**
-       * 监听菜单组件的点击事件的回调函数
+       * 自动获取改变的菜单项
        * @param menuItem 当前点击的菜单项
        */
       setCheckedSort: function (menuItem) {
         console.log(menuItem);
         this.menuSon.checkedSort = menuItem;
-//        for (var atr in menuItem) {
-//            console.log(menuItem[atr]);
-//          this.menuSon.checkedSort[atr] = menuItem[atr];
-//        }
-//        this.$set(this.menuSon, 'checkedSort',menuItem  )
+        this.updataTop();
       },
+
       /**
        *  （同步） 获取请求列表数据的body参数
        *   来源：
@@ -177,29 +170,45 @@
        *       2. 所有列表的数据对象，因为里面包含有当前的筛选方式
        *
        */
-      getHttpPostListBody: function (page, pageCount) {
+      _getHttpPostListUpdata: function (way) {
+        if (!way) way = 'bottom';
         var body = {
           "accurateMap": {
-            "game_id": [],
-            "goods_type": [],
-            "region_id": [],
-            "server_id": [],
-          },
-          "betweenMap": {},
-          "keyWordMap": {},
-          "page": page || 1,
-          "pageCount": pageCount || 6,
-          "sortMap": {}
+            "goods_type": ["2"],
+            "game_id": ["YX16053120241378200001"],
+            "server_id": ["YXF16053120333100500020"],
+            "region_id": ["YXQ16053120274791000015"]
+          }, "keyWordMap": {}, "betweenMap": {}, "page": 1, "pageCount": 20, "sortMap": {"goods_source_type": "+"}
         };
+        var url = "/api//mobile-goodsSearch-service/rs/goodsSearch/goodsSearchList";
+        this.httpPost(url, body).then(function (res) {
+          console.log(res);
+        })
       },
+
       /**
-       * 发送列表请求
+       * （异步）发送POST 请求
        *
        */
-      httpPostList: function () {
-
+      httpPost: function (url, body) {
+        return this.$http.post(url, body)
       },
 
+      /**
+       * 下拉更新
+       */
+      updataTop: function () {
+        console.log('top')
+        return this._getHttpPostListUpdata('top');
+      },
+
+      /**
+       * 追加数据
+       */
+      updataBottom: function () {
+        console.log('bottom')
+        return this._getHttpPostListUpdata('bottom');
+      }
     }
   }
 </script>
