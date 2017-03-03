@@ -158,7 +158,7 @@
        * @param menuItem 当前点击的菜单项
        */
       setCheckedSort: function (menuItem) {
-        if(this.menuSon.checkedSort.name == menuItem.name)return;
+        if (this.menuSon.checkedSort.name == menuItem.name)return;
         console.log(menuItem);
         this.menuSon.checkedSort = menuItem;
         this.updataTop();
@@ -175,7 +175,7 @@
 //        * 参数一 ：top/bottom  参数二 ： 保留
 //        * 先获取到选中菜单
 //        * 根据选中的菜单找到数组中存放数据的对象，如果不存在则创建,改方式为bottom
-//        * 根据数据对象，判定page和pageCount的值,如果为 top，设 0和 1
+//        * 根据数据对象，判定page和pageCount的值,如果为 top，设 1和 20
 //        * 根据当前的资料，凑成一个 body
 //        * 根据这个body,调用post请求方法，获取数据
 //        * 把数据合并到当前的数据对象的数组中
@@ -185,6 +185,8 @@
 //        * 	追加到前面，如果有缺失，不消除列表数据，正常显示。功能待定
 //        * 返回一个 promise
         var self = this;
+        var page = null;
+        var pageCount = 20;
         if (!way) way = 'bottom';
         var checkedSort = self.menuSon.checkedSort;
         var itemMapNow = null; // 表示当前需要显示的数据的对象
@@ -195,7 +197,15 @@
         if (!itemMapNow) { // 没缓存
           way = "bottom"
           itemMapNow = JSON.parse(JSON.stringify(checkedSort));
+          itemMapNow.list = [];
+          itemMapNow.page = 0;
           self.itemMap.push(itemMapNow);
+        }
+        if (way == "top") {
+          page = 1;
+        } else {
+          itemMapNow.page += 1;
+          page = itemMapNow.page;
         }
         var body = {
           "accurateMap": {
@@ -203,11 +213,27 @@
             "game_id": ["YX16053120241378200001"],
             "server_id": ["YXF16053120333100500020"],
             "region_id": ["YXQ16053120274791000015"]
-          }, "keyWordMap": {}, "betweenMap": {}, "page": 1, "pageCount": 20, "sortMap": {"goods_source_type": "+"}
+          }, "keyWordMap": {}, "betweenMap": {}, "page": 1  , "pageCount": 20, "sortMap": {"goods_source_type": "+"}
         };
         var url = "/api//mobile-goodsSearch-service/rs/goodsSearch/goodsSearchList";
         this.httpPost(url, body).then(function (res) {
-          console.log("------start------- \n 请求方式:", way, "\n 数据对象:", res, "---------end-------- \n");
+          var getItems = JSON.parse(res.data.result);
+          if (getItems.items.length == 0) {
+            console.log("数据请求完了。")
+            return
+          }
+          console.log("------start-------", "" +
+            "\n 排序方式：", itemMapNow.name,
+            "\n 请求方式：", way,
+            "\n 请求页码：", page,
+            "\n 请求数量：", pageCount,
+            "\n 原本数量：", itemMapNow.list.length,
+            "\n 加后数量：", itemMapNow.list.length + getItems.items.length,
+            "\n 总数据量：", getItems.total,
+            "\n 新增对象：", getItems.items,
+            "\n---------end--------");
+        }, function () {
+          console.error("请求数据出错！不是自己参数错，就是服务器蹦。");
         })
       },
 
@@ -223,7 +249,6 @@
        * 下拉更新
        */
       updataTop: function () {
-        console.log('top')
         return this._getHttpPostListUpdata('top');
       },
 
@@ -231,7 +256,6 @@
        * 追加数据
        */
       updataBottom: function () {
-        console.log('bottom')
         return this._getHttpPostListUpdata('bottom');
       }
     }
