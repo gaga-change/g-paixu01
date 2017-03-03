@@ -25,7 +25,7 @@
       </div>
     </div>
     <!-- 商品列表 -->
-    <vue-list></vue-list>
+    <vue-list :checkedSort="menuSon.checkedSort" :itemMap="itemMap"></vue-list>
     <!-- 存在感 -->
     <div class="czg-float">
       <a href="../phb/Leaderboard.html"></a>
