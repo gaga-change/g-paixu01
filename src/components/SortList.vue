@@ -220,13 +220,8 @@
           "sortMap": itemMapNow.sortMap
         };
         var url = "/api//mobile-goodsSearch-service/rs/goodsSearch/goodsSearchList";
-        this.httpPost(url, body).then(function (res) {
-          if (!res.data.success) {
-            console.log("服务器返回说'请求失败！'应该是参xiao数fei给少了");
-            return
-          }
-          var getItems = JSON.parse(res.data.result);
-          if (getItems.items.length == 0) {
+        this.httpPost(url, body).then(function (result) {
+          if (result.items.length == 0) {
             console.log("数据请求完了。")
             return
           }
@@ -236,21 +231,33 @@
             "\n 请求页码：", page,
             "\n 请求数量：", pageCount,
             "\n 原本数量：", itemMapNow.list.length,
-            "\n 加后数量：", itemMapNow.list.length + getItems.items.length,
-            "\n 总数据量：", getItems.total,
-            "\n 新增对象：", getItems.items,
+            "\n 加后数量：", itemMapNow.list.length + result.items.length,
+            "\n 总数据量：", result.total,
+            "\n 新增对象：", result.items,
             "\n---------end--------");
         }, function () {
-          console.error("请求数据出错！不是自己参数错，就是服务器蹦。");
+          console.error("楼上已经说的很清楚了 ╭∩╮(︶︿︶)╭∩╮" );
         })
       },
 
       /**
-       * （异步）发送POST 请求
+       * （异步）发送POST 请求。 同时处理数据失败的情况。
        *
        */
       httpPost: function (url, body) {
-        return this.$http.post(url, body)
+        var self = this;
+        return new Promise(function (resolve, reject) {
+          self.$http.post(url, body).then(function (res) {
+            if (!res.data.success) {
+              console.error("服务器返回说'请求失败！'应该是参xiao数fei给少了");
+              reject("");
+              return
+            }
+            resolve(JSON.parse(res.data.result))
+          }, function () {
+            console.log("httpPost 请求数据失败,求情的服务器倒闭 ！不然就是路径写错");
+          })
+        })
       },
 
       /**
