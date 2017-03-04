@@ -150,8 +150,9 @@
     <!--{{checkedItem.list[0]}}-->
     <ul>
       <!--{{itemMap}}-->
-      <li v-for="item in checkedItem.list">
+      <li v-for="(item,index) in checkedItem.list">
         <span v-text="item.title || '空Title'"></span>
+        <hr v-if="(index+1)%20 == 0">
       </li>
     </ul>
   </div>

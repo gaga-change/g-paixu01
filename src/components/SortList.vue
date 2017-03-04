@@ -202,14 +202,12 @@
             itemMapNow.page = 0;
             self.itemMap.push(itemMapNow);
           }
-          console.log(itemMapNow);
           if (way == "top") {
             page = 1;
           } else {
             itemMapNow.page += 1;
             page = itemMapNow.page;
           }
-          console.log(self.query);
           var body = {
             "accurateMap": {
               "goods_type": ["2"],
