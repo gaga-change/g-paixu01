@@ -147,13 +147,12 @@
   <div>
     <!--<h1 v-text="my.name">获取到的数据</h1>-->
     <hr>
-    {{checkedItem}}
+    <!--{{checkedItem.list[0]}}-->
     <ul>
       <!--{{itemMap}}-->
-
-      <!--<li v-for="item itemMapNow.list">-->
-
-      <!--</li>-->
+      <li v-for="item in checkedItem.list">
+        <span v-text="item.title || '空Title'"></span>
+      </li>
     </ul>
   </div>
 </template>

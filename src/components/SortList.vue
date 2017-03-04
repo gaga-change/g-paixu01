@@ -120,7 +120,7 @@
               checkedSort: {
                 name: "默认排序（发布时间排序）",
                 sortMap: {
-                  create_time: '-'
+                  goods_source_type: '+'
                 }
               },
               sortWay: [
@@ -159,7 +159,6 @@
        */
       setCheckedSort: function (menuItem) {
         if (this.menuSon.checkedSort.name == menuItem.name)return;
-        console.log(menuItem);
         this.menuSon.checkedSort = menuItem;
         this.updataTop();
       },
@@ -185,58 +184,78 @@
 //        * 	追加到前面，如果有缺失，不消除列表数据，正常显示。功能待定
 //        * 返回一个 promise
         var self = this;
-        var page = null;
-        var pageCount = 20;
-        if (!way) way = 'bottom';
-        var checkedSort = self.menuSon.checkedSort;
-        var itemMapNow = null; // 表示当前需要显示的数据的对象
-        self.itemMap.map(function (val, index) {
-          if (val.name == checkedSort.name)
-            itemMapNow = val;
-        })
-        if (!itemMapNow) { // 没缓存
-          way = "bottom"
-          itemMapNow = JSON.parse(JSON.stringify(checkedSort));
-          itemMapNow.list = [];
-          itemMapNow.page = 0;
-          self.itemMap.push(itemMapNow);
-        }
-        if (way == "top") {
-          page = 1;
-        } else {
-          itemMapNow.page += 1;
-          page = itemMapNow.page;
-        }
-        console.log(self.query);
-        var body = {
-          "accurateMap": {
-            "goods_type": ["2"],
-            "game_id": [self.query.gid],
-            "server_id": [self.query.serverid],
-            "region_id": [self.query.areaid]
-          }, "keyWordMap": {}, "betweenMap": {},
-          "page": page,
-          "pageCount": pageCount,
-          "sortMap": itemMapNow.sortMap
-        };
-        var url = "/api//mobile-goodsSearch-service/rs/goodsSearch/goodsSearchList";
-        this.httpPost(url, body).then(function (result) {
-          if (result.items.length == 0) {
-            console.log("数据请求完了。")
-            return
+        return new Promise(function (resolve, reject) {
+          var addNum = 0; // 新添的数量
+          var page = null;
+          var pageCount = 20;
+          if (!way) way = 'bottom';
+          var checkedSort = self.menuSon.checkedSort;
+          var itemMapNow = null; // 表示当前需要显示的数据的对象
+          self.itemMap.map(function (val, index) {
+            if (val.name == checkedSort.name)
+              itemMapNow = val;
+          })
+          if (!itemMapNow) { // 没缓存
+            way = "bottom"
+            itemMapNow = JSON.parse(JSON.stringify(checkedSort));
+            itemMapNow.list = [];
+            itemMapNow.page = 0;
+            self.itemMap.push(itemMapNow);
           }
-          console.log("------start-------", "" +
-            "\n 排序方式：", itemMapNow.name,
-            "\n 请求方式：", way,
-            "\n 请求页码：", page,
-            "\n 请求数量：", pageCount,
-            "\n 原本数量：", itemMapNow.list.length,
-            "\n 加后数量：", itemMapNow.list.length + result.items.length,
-            "\n 总数据量：", result.total,
-            "\n 新增对象：", result.items,
-            "\n---------end--------");
-        }, function () {
-          console.error("楼上已经说的很清楚了 ╭∩╮(︶︿︶)╭∩╮" );
+          console.log(itemMapNow);
+          if (way == "top") {
+            page = 1;
+          } else {
+            itemMapNow.page += 1;
+            page = itemMapNow.page;
+          }
+          console.log(self.query);
+          var body = {
+            "accurateMap": {
+              "goods_type": ["2"],
+              "game_id": [self.query.gid],
+              "server_id": [self.query.serverid],
+              "region_id": [self.query.areaid]
+            }, "keyWordMap": {}, "betweenMap": {},
+            "page": page,
+            "pageCount": pageCount,
+            "sortMap": itemMapNow.sortMap
+          };
+          var url = "/api//mobile-goodsSearch-service/rs/goodsSearch/goodsSearchList";
+          self.httpPost(url, body).then(function (result) {
+            if (result.items.length == 0) {
+              console.log("数据请求完了。")
+              return
+            }
+
+            if(way == "top"){
+//                合并到前面,抹去相同的
+              result.items.reverse().map(function (nweVal) {
+                if (itemMapNow.list.every(function (oldVal) {
+                    if (oldVal.id === nweVal.id)return false;
+                    return true;
+                  })) {
+                  itemMapNow.list.unshift(nweVal);
+                  addNum ++;
+                }
+              });
+            }else {
+                addNum = result.items.length
+              itemMapNow.list.push(...result.items);
+            }
+            console.log("------start-------", "" +
+              "\n 排序方式：", itemMapNow.name,
+              "\n 请求方式：", way,
+              "\n 请求页码：", page,
+              "\n 请求数量：", pageCount,
+              "\n 原本数量：", itemMapNow.list.length,
+              "\n 增加数量：", addNum,
+              "\n 总数据量：", result.total,
+              "\n 新增对象：", result.items,
+              "\n---------end--------");
+          }, function () {
+            console.error("楼上已经说的很清楚了 ╭∩╮(︶︿︶)╭∩╮");
+          })
         })
       },
 
