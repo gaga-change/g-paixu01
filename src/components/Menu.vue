@@ -32,6 +32,7 @@
   h1 {
     text-align: center;
     margin-top: 2em;
+    margin-bottom: 1em;
   }
   ul {
     list-style: none;
@@ -39,13 +40,16 @@
     padding: 0;
   }
 
-  ul > li {
-    border-bottom: 1px solid gainsboro;
-    padding: 20px 10px;
-  }
-
   ul > li:nth-child(even) {
     background-color: #bbefa0;
+  }
+  ul > li:nth-child(odd) {
+    background-color: #efbdcb;
+  }
+  li a {
+    border-bottom: 1px solid gainsboro;
+    padding: 20px 30px;
+    display: block;
   }
 
 
