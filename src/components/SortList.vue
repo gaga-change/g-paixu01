@@ -1,16 +1,15 @@
 <template>
   <div id="pageWrapper">
-
+    <div style="height: 4rem; width: 100%"></div>
     <!-- top -->
-    <div class="fw fixed " style="z-index:39;">
+    <div class="fw " style="z-index:39;position: fixed;top: 0">
       <!-- 头部 -->
-      <!--<button @click="updateTop()">TOP 更新</button>-->
-      <!--<button @click="updateBottom()">Bottom 追加</button>-->
       <vue-head>
         <span v-text="query.gname"></span><span v-if="query.areaname">/</span>
         <span v-text="query.areaname"></span><span v-if="query.servername">/</span>
         <span v-text="query.servername"></span>
       </vue-head>
+      <!-- 菜单 -->
       <vue-menu :menu-son="menuSon" @clickMenu="setCheckedSort">
         <span slot="menu-left"><cite v-text="menuSon.checkedSort.name"></cite><img src="/images/down3.png"></span>
         <span slot="menu-right"><cite>筛选</cite><img src="/images/filter.png"></span>
