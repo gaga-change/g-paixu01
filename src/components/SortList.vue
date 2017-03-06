@@ -4,8 +4,8 @@
     <!-- top -->
     <div class="fw fixed " style="z-index:39;">
       <!-- 头部 -->
-      <button @click="updataTop()">TOP 更新</button>
-      <button @click="updataBottom()">Bottom 追加</button>
+      <button @click="updateTop()">TOP 更新</button>
+      <button @click="updateBottom()">Bottom 追加</button>
       <vue-head>
         <span v-text="query.gname"></span><span v-if="query.areaname">/</span>
         <span v-text="query.areaname"></span><span v-if="query.servername">/</span>
@@ -16,16 +16,23 @@
         <span slot="menu-right"><cite>筛选</cite><img src="/images/filter.png"></span>
       </vue-menu>
     </div>
-    <!-- 列表为空 -->
-    <div class="list-main2 ">
-      <div class="list-empty" id="list-empty">
-        <p><img src="/images/gamelogo.png"></p>
-        <span>很抱歉，没有找到商品</span>
-        <div class="topc"><a href="#">去电脑版看看</a></div>
-      </div>
-    </div>
+    <!--&lt;!&ndash; 列表为空 &ndash;&gt;-->
+    <!--<div class="list-main2 ">-->
+    <!--<div class="list-empty" id="list-empty">-->
+    <!--<p><img src="/images/gamelogo.png"></p>-->
+    <!--<span>很抱歉，没有找到商品</span>-->
+    <!--<div class="topc"><a href="#">去电脑版看看</a></div>-->
+    <!--</div>-->
+    <!--</div>-->
     <!-- 商品列表 -->
-    <vue-list :checkedSort="menuSon.checkedSort" :itemMap="itemMap"></vue-list>
+    <vue-list
+      :checked-sort="menuSon.checkedSort"
+      :item-map="itemMap"
+      :update-top = "updateTop"
+      :update-bottom = "updateBottom"
+      :init-finish ="initFinish"
+    >
+    </vue-list>
     <!-- 存在感 -->
     <div class="czg-float">
       <a href="../phb/Leaderboard.html"></a>
@@ -82,7 +89,8 @@
          *           items: [] 当前排序下的数据项
          *        }
          * */
-        itemMap: []
+        itemMap: [],
+        initFinish: false
       }
     },
     created: function () {
@@ -91,7 +99,8 @@
       this.setQuery();
       this.setMenu().then(function () {
         console.log("菜单对象获取完成", self.menuSon);
-        self.updataBottom()
+        self.initFinish= true;
+        self.updateBottom()
       });
     },
     components: {
@@ -160,7 +169,7 @@
       setCheckedSort: function (menuItem) {
         if (this.menuSon.checkedSort.name == menuItem.name)return;
         this.menuSon.checkedSort = menuItem;
-        this.updataTop();
+        this.updateTop();
       },
 
       /**
@@ -170,7 +179,7 @@
        *       2. 所有列表的数据对象，因为里面包含有当前的筛选方式
        *
        */
-      _getHttpPostListUpdata: function (way) {
+      _getHttpPostListupdate: function (way) {
 //        * 参数一 ：top/bottom  参数二 ： 保留
 //        * 先获取到选中菜单
 //        * 根据选中的菜单找到数组中存放数据的对象，如果不存在则创建,改方式为bottom
@@ -223,10 +232,11 @@
           self.httpPost(url, body).then(function (result) {
             if (result.items.length == 0) {
               console.log("数据请求完了。")
+              resolve("当下数据接收完毕")
               return
             }
 
-            if(way == "top"){
+            if (way == "top") {
 //                合并到前面,抹去相同的
               result.items.reverse().map(function (nweVal) {
                 if (itemMapNow.list.every(function (oldVal) {
@@ -234,13 +244,14 @@
                     return true;
                   })) {
                   itemMapNow.list.unshift(nweVal);
-                  addNum ++;
+                  addNum++;
                 }
               });
-            }else {
-                addNum = result.items.length
+            } else {
+              addNum = result.items.length
               itemMapNow.list.push(...result.items);
             }
+            console.log(itemMapNow);
             console.log("------start-------", "" +
               "\n 排序方式：", itemMapNow.name,
               "\n 请求方式：", way,
@@ -251,8 +262,10 @@
               "\n 总数据量：", result.total,
               "\n 新增对象：", result.items,
               "\n---------end--------");
+            resolve();
           }, function () {
             console.error("楼上已经说的很清楚了 ╭∩╮(︶︿︶)╭∩╮");
+            reject();
           })
         })
       },
@@ -280,15 +293,15 @@
       /**
        * 下拉更新
        */
-      updataTop: function () {
-        return this._getHttpPostListUpdata('top');
+      updateTop: function () {
+        return this._getHttpPostListupdate('top');
       },
 
       /**
        * 追加数据
        */
-      updataBottom: function () {
-        return this._getHttpPostListUpdata('bottom');
+      updateBottom: function () {
+        return this._getHttpPostListupdate('bottom');
       }
     }
   }
