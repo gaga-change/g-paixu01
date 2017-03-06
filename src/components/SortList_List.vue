@@ -63,12 +63,17 @@
         listItemMap: this.itemMap,
         list: [],
         wrapperHeight: 0,
-        onPost: false
+        onPost: false,
       }
     },
     watch: {
       checkedSort: function (val, oldVal) {
         var self = this;
+        if (val.name.length > 0) {
+          this.$nextTick(function () {
+            document.body.scrollTop = this.checkedItem.scroll;
+          })
+        }
         if (val.name.length > 0 && !self.checkedItem.allLoaded && self.checkedItem.list == 0) {
           // 发送第一次请求
           self.updateBottom().then(function (noData) {
@@ -90,6 +95,9 @@
         self.itemMap.map(function (val, index) {
           if (typeof val.allLoaded == 'undefined') {
             self.$set(self.itemMap[index], 'allLoaded', false)
+          }
+          if (typeof val.scroll == 'undefined') {
+            self.$set(self.itemMap[index], 'scroll', 0)
           }
           if (typeof val.loading == 'undefined') {
             self.$set(self.itemMap[index], 'loading', false)
@@ -123,10 +131,15 @@
         self.updateTop().then(function () {
           self.$refs.loadmore.onTopLoaded();
         })
+      },
+      handleScroll(){
+        let height = document.body.scrollTop;
+        this.checkedItem.scroll = height;
       }
     },
     mounted() {
       this.wrapperHeight = document.documentElement.clientHeight - this.$refs.wrapper.getBoundingClientRect().top;
+      window.addEventListener('scroll', this.handleScroll);
     }
 
   }
