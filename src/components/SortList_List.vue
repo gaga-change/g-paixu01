@@ -1,42 +1,53 @@
 <template>
 
-    <div class="list-main content " ref="wrapper" :style="{ height: wrapperHeight + 'px' }">
-      <mt-loadmore
-        :top-method="loadTop"
-        ref="loadmore"
+  <div class="list-main content " ref="wrapper" :style="{ height: wrapperHeight + 'px' }">
+    <mt-loadmore
+      :top-method="loadTop"
+      ref="loadmore"
+    >
+      <ul class="lists"
+           v-infinite-scroll="loadBottom"
+           infinite-scroll-disabled="checkedItem.loading"
+           infinite-scroll-distance="0"
+           :infinite-scroll-immediate-check="true"
       >
-        <div class="lists"
-             v-infinite-scroll="loadBottom"
-             infinite-scroll-disabled="checkedItem.loading"
-             infinite-scroll-distance="0"
-             :infinite-scroll-immediate-check="true"
-        >
-          <a href="#" v-for="(item,index) in checkedItem.list">
-            <!--<p v-if="index == 1">{{item}}</p>-->
-            <div class="pro-list">
-              <div class="pro-pic">
-                <img src="/images/p13.png">
-                <div class="pro-cata">号</div>
-              </div>
-              <div class="pro-title">
-                <p class="title3" v-text="item.title"></p>
-                <p class="price3">
-                  ￥492
-                  <em>浏览 1252</em>
-                  <i class="axm">安心买</i>
-                  <i class="mobPro">M站商品</i>
-                  <i class="ji f22">寄</i>
-                  <i class="dan f22">担</i>
-                </p>
-              </div>
+        <a href="#" v-for="(item,index) in checkedItem.list">
+          <!--<p v-if="index == 1">{{item}}</p>-->
+          <div class="pro-list">
+            <div class="pro-pic">
+              <img src="/images/p13.png">
+              <div class="pro-cata">号</div>
             </div>
-          </a>
-        </div>
-        <p v-show="!checkedItem.loading" class="page-infinite-loading">
-          <mt-spinner type="fading-circle"></mt-spinner>
-          <span>加载中...</span>
-        </p>
-      </mt-loadmore>
+            <div class="pro-title">
+              <p class="title3" v-text="item.title"></p>
+              <p class="price3">
+                ￥492
+                <em>浏览 1252</em>
+                <i class="axm">安心买</i>
+                <i class="mobPro">M站商品</i>
+                <i class="ji f22">寄</i>
+                <i class="dan f22">担</i>
+              </p>
+            </div>
+          </div>
+          <div style="clear: both"></div>
+        </a>
+        <!--<p v-show="true " class="page-infinite-loading">-->
+      </ul>
+      <p v-show="checkedItem.loading && !checkedItem.allLoaded " class="page-infinite-loading">
+        <mt-spinner type="fading-circle"></mt-spinner>
+        <span>加载中...</span>
+      </p>
+      <!--
+        loading = true; 再发送请求     显示
+        loading = false; 发送请求结束  不显示
+
+        allLoaded = false 数据没完    显示
+        allLoaded = true 数据完了     不显示
+
+      -->
+      <!--{{checkedItem.loading && !checkedItem.allLoaded }}-->
+    </mt-loadmore>
   </div>
   <!--
   <div>
@@ -156,20 +167,21 @@
 
   }
 </script>
-<style scoped>
+<style>
+  .page-infinite-loading {
+    float: left;
+    margin-top: -1em;
+    height: 50px;
+    width: 100%;
+    line-height: 50px;
+    text-align: center;
 
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
   }
 
-  ul > li {
-    border-bottom: 1px solid gainsboro;
-    padding: 20px 10px;
-  }
-
-  ul > li:nth-child(even) {
-    background-color: #bbefa0;
+  /*和 scoped 冲突*/
+  .page-infinite-loading div {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
   }
 </style>
