@@ -76,10 +76,17 @@
         }
         if (val.name.length > 0 && !self.checkedItem.allLoaded && self.checkedItem.list == 0) {
           // 发送第一次请求
+          if (self.onPost) return;
+          self.onPost = true;
           self.updateBottom().then(function (noData) {
             console.log("子组价内部发的第一次请求");
+            self.onPost = false;
             if (noData) {
+
               self.checkedItem.allLoaded = true;
+
+            } else {
+              self.checkedItem.loading = false;
             }
           });
         }
@@ -90,7 +97,7 @@
         var self = this;
         var checkedItem = null;
         if (self.checkedSort == null || self.itemMap == null) {
-          return {list: [], name: '', allLoaded: false};
+          return {list: [], name: ''};
         }
         self.itemMap.map(function (val, index) {
           if (typeof val.allLoaded == 'undefined') {
@@ -100,13 +107,13 @@
             self.$set(self.itemMap[index], 'scroll', 0)
           }
           if (typeof val.loading == 'undefined') {
-            self.$set(self.itemMap[index], 'loading', false)
+            self.$set(self.itemMap[index], 'loading', true)
           }
           if (val.name == self.checkedSort.name) {
             checkedItem = val;
           }
         });
-        return checkedItem || {list: [], name: '', allLoaded: false};
+        return checkedItem || {list: [], name: ''};
       }
     },
     methods: {
