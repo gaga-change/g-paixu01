@@ -19,8 +19,8 @@
     <vue-list
       :checked-sort="menuSon.checkedSort"
       :item-map="itemMap"
-      :update-top = "updateTop"
-      :update-bottom = "updateBottom"
+      :update-top="updateTop"
+      :update-bottom="updateBottom"
     >
     </vue-list>
     <!-- 存在感 -->
@@ -199,7 +199,8 @@
             self.itemMap.push(itemMapNow);
           }
           if (way == "top") {
-            page = 1;
+            itemMapNow.page = 1;
+            page = itemMapNow.page;
           } else {
             itemMapNow.page += 1;
             page = itemMapNow.page;
@@ -219,20 +220,12 @@
           self.httpPost(url, body).then(function (result) {
             if (result.items.length == 0) {
               console.log("数据请求完了。")
-              resolve("当下数据接收完毕")
+              resolve(true)
               return
             }
             if (way == "top") {
-//                合并到前面,抹去相同的
-              result.items.reverse().map(function (nweVal) {
-                if (itemMapNow.list.every(function (oldVal) {
-                    if (oldVal.id === nweVal.id)return false;
-                    return true;
-                  })) {
-                  itemMapNow.list.unshift(nweVal);
-                  addNum++;
-                }
-              });
+//              清空原来的，替换现有的
+              itemMapNow.list = result.items;
             } else {
               addNum = result.items.length
               itemMapNow.list.push(...result.items);
