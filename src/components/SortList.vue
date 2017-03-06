@@ -4,8 +4,8 @@
     <!-- top -->
     <div class="fw fixed " style="z-index:39;">
       <!-- 头部 -->
-      <button @click="updateTop()">TOP 更新</button>
-      <button @click="updateBottom()">Bottom 追加</button>
+      <!--<button @click="updateTop()">TOP 更新</button>-->
+      <!--<button @click="updateBottom()">Bottom 追加</button>-->
       <vue-head>
         <span v-text="query.gname"></span><span v-if="query.areaname">/</span>
         <span v-text="query.areaname"></span><span v-if="query.servername">/</span>
@@ -127,19 +127,19 @@
           setTimeout(function () {
             menuSon = {
               checkedSort: {
-                name: "默认排序（发布时间排序）",
+                name: "默认排序",
                 sortMap: {
                   goods_source_type: '+'
                 }
               },
               sortWay: [
                 {
-                  name: "默认排序（发布时间排序）",
+                  name: "发布时间排序",
                   sortMap: {
                     create_time: '-'
                   }
                 }, {
-                  name: "热门排序（浏览量高到低）",
+                  name: "浏览量高到低",
                   sortMap: {
                     browse_count: '-'
                   }
@@ -235,7 +235,6 @@
               resolve("当下数据接收完毕")
               return
             }
-
             if (way == "top") {
 //                合并到前面,抹去相同的
               result.items.reverse().map(function (nweVal) {
