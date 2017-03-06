@@ -22,10 +22,8 @@
       :update-bottom="updateBottom"
     >
     </vue-list>
-    <!-- 存在感 -->
-    <div class="czg-float">
-      <a href="../phb/Leaderboard.html"></a>
-    </div>
+    <!-- 回到顶部 -->
+    <vue-go-top></vue-go-top>
   </div>
 </template>
 
@@ -35,6 +33,7 @@
   import Head from './SortList_Head.vue'
   import Menu from './SortList_Menu.vue'
   import List from './SortList_List.vue'
+  import GoTop from './SortList_GoTop.vue'
   Vue.use(VueRousource);
   export default {
     name: "SortList",
@@ -92,7 +91,8 @@
     components: {
       'vue-head': Head,
       'vue-menu': Menu,
-      'vue-list': List
+      'vue-list': List,
+      'vue-go-top': GoTop
     },
     methods: { // 对数据进行操作的方法只能是get/set方法。异步get/set返回的是promise对象
 
