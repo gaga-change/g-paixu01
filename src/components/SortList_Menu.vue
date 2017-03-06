@@ -16,7 +16,7 @@
     <div v-if="sortWayShow" class="divc showcata2 border-top" style="display: block"
          @click="clickSortWay($event, 'sortWay')">
       <ul>
-        <li v-for="(item,index) in sortWay"><a href="javascript:;" :data-index="index" v-text="item.name"></a>
+        <li v-for="(item,index) in sortWay"><a href="javascript:void(0);" :data-index="index" v-text="item.name"></a>
         </li>
         <!--<li><a href="javascript:;" selectid="1">热门排序</a></li>-->
         <!--<li><a href="javascript:;" selectid="2">价格从低到高</a></li>-->
