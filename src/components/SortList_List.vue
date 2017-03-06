@@ -28,7 +28,7 @@
             <div class="pro-title">
               <p class="title3" v-text="item.title"></p>
               <p class="price3">
-                ￥492
+                <b style="font-weight: normal" v-text="'￥' + item.price"></b>
                 <em>浏览 1252</em>
                 <i class="axm">安心买</i>
                 <i class="mobPro">M站商品</i>
