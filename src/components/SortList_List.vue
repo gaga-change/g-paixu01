@@ -1,18 +1,25 @@
 <template>
-
   <div class="list-main content " ref="wrapper" :style="{ height: wrapperHeight + 'px' }">
+    <!-- 列表为空 -->
+    <div v-if="checkedItem.list.length == 0 && checkedItem.allLoaded" class="list-main2">
+      <!--<div v-if="true" class="list-main2" >-->
+      <div class="list-empty" id="list-empty">
+        <p><img src="/images/gamelogo.png"></p>
+        <span>很抱歉，没有找到商品</span>
+        <div class="topc"><a href="javascipt:void(0)">去电脑版看看</a></div>
+      </div>
+    </div>
     <mt-loadmore
       :top-method="loadTop"
       ref="loadmore"
     >
       <ul class="lists"
-           v-infinite-scroll="loadBottom"
-           infinite-scroll-disabled="checkedItem.loading"
-           infinite-scroll-distance="0"
-           :infinite-scroll-immediate-check="true"
+          v-infinite-scroll="loadBottom"
+          infinite-scroll-disabled="checkedItem.loading"
+          infinite-scroll-distance="0"
+          :infinite-scroll-immediate-check="true"
       >
         <a href="#" v-for="(item,index) in checkedItem.list">
-          <!--<p v-if="index == 1">{{item}}</p>-->
           <div class="pro-list">
             <div class="pro-pic">
               <img src="/images/p13.png">
@@ -32,50 +39,14 @@
           </div>
           <div style="clear: both"></div>
         </a>
-        <!--<p v-show="true " class="page-infinite-loading">-->
       </ul>
       <p v-show="checkedItem.loading && !checkedItem.allLoaded " class="page-infinite-loading">
         <mt-spinner type="fading-circle"></mt-spinner>
         <span>加载中...</span>
       </p>
-      <!--
-        loading = true; 再发送请求     显示
-        loading = false; 发送请求结束  不显示
-
-        allLoaded = false 数据没完    显示
-        allLoaded = true 数据完了     不显示
-
-      -->
-      <!--{{checkedItem.loading && !checkedItem.allLoaded }}-->
     </mt-loadmore>
   </div>
-  <!--
-  <div>
-    <div style="height: 200px;background-color: #5dc4a1"></div>
-    <div class="page-loadmore-wrapper" ref="wrapper" :style="{ height: wrapperHeight + 'px' }">
-      <mt-loadmore
-        :top-method="loadTop"
-        ref="loadmore"
-      >
-        <ul class="page-infinite-list"
-            v-infinite-scroll="loadMore"
-            infinite-scroll-disabled="loading"
-            infinite-scroll-distance="500">
-          <li v-for="item in list" class="page-infinite-listitem">{{ item }}</li>
-        </ul>
-        <p v-show="loading" class="page-infinite-loading">
-          <mt-spinner v-if="!allLoaded" type="fading-circle"></mt-spinner>
-
-          <span v-if="!allLoaded">加载中...</span>
-          <span v-if="allLoaded">加载结束</span>
-        </p>
-
-      </mt-loadmore>
-    </div>
-  </div>
--->
 </template>
-
 <script>
 
   import Vue from 'vue'
@@ -93,15 +64,22 @@
         list: [],
         wrapperHeight: 0,
         onPost: false
-//        loading: false,
       }
     },
-    created: function () {
-      this.itemMap.map(function (v) {
-        console.log(v)
-      })
+    watch: {
+      checkedSort: function (val, oldVal) {
+        var self = this;
+        if (val.name.length > 0 && !self.checkedItem.allLoaded && self.checkedItem.list == 0) {
+          // 发送第一次请求
+          self.updateBottom().then(function (noData) {
+            console.log("子组价内部发的第一次请求");
+            if (noData) {
+              self.checkedItem.allLoaded = true;
+            }
+          });
+        }
+      }
     },
-
     computed: {
       checkedItem: function () {
         var self = this;
@@ -139,20 +117,6 @@
             self.checkedItem.loading = false;
           }
         })
-//
-//        setTimeout(function () {
-//          if (self.list.length >= 50) {
-//            console.log(" 结束");
-//            self.checkedItem.allLoaded = true;
-//            return;
-//          }
-//
-//          let last = self.list[self.list.length - 1];
-//          for (let i = 1; i <= 10; i++) {
-//            self.list.push(last + i);
-//          }
-//          self.loading = false;
-//        }, 500);
       },
       loadTop(){
         let self = this;
@@ -175,7 +139,6 @@
     width: 100%;
     line-height: 50px;
     text-align: center;
-
   }
 
   /*和 scoped 冲突*/

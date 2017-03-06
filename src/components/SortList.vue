@@ -16,21 +16,11 @@
         <span slot="menu-right"><cite>筛选</cite><img src="/images/filter.png"></span>
       </vue-menu>
     </div>
-    <!--&lt;!&ndash; 列表为空 &ndash;&gt;-->
-    <!--<div class="list-main2 ">-->
-    <!--<div class="list-empty" id="list-empty">-->
-    <!--<p><img src="/images/gamelogo.png"></p>-->
-    <!--<span>很抱歉，没有找到商品</span>-->
-    <!--<div class="topc"><a href="#">去电脑版看看</a></div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!-- 商品列表 -->
     <vue-list
       :checked-sort="menuSon.checkedSort"
       :item-map="itemMap"
       :update-top = "updateTop"
       :update-bottom = "updateBottom"
-      :init-finish ="initFinish"
     >
     </vue-list>
     <!-- 存在感 -->
@@ -89,8 +79,7 @@
          *           items: [] 当前排序下的数据项
          *        }
          * */
-        itemMap: [],
-        initFinish: false
+        itemMap: []
       }
     },
     created: function () {
@@ -99,8 +88,6 @@
       this.setQuery();
       this.setMenu().then(function () {
         console.log("菜单对象获取完成", self.menuSon);
-        self.initFinish= true;
-        self.updateBottom()
       });
     },
     components: {
@@ -169,7 +156,7 @@
       setCheckedSort: function (menuItem) {
         if (this.menuSon.checkedSort.name == menuItem.name)return;
         this.menuSon.checkedSort = menuItem;
-        this.updateTop();
+//        this.updateTop();
       },
 
       /**
@@ -250,7 +237,6 @@
               addNum = result.items.length
               itemMapNow.list.push(...result.items);
             }
-            console.log(itemMapNow);
             console.log("------start-------", "" +
               "\n 排序方式：", itemMapNow.name,
               "\n 请求方式：", way,
