@@ -18,27 +18,32 @@
           infinite-scroll-disabled="checkedItem.loading"
           infinite-scroll-distance="0"
           :infinite-scroll-immediate-check="true"
+          :style="{'height': 3.9 * checkedItem.list.length + 'rem'}"
       >
-        <a href="#" v-for="(item,index) in checkedItem.list">
-          <div class="pro-list">
-            <div class="pro-pic">
-              <img src="/images/p13.png">
-              <div class="pro-cata">号</div>
-            </div>
-            <div class="pro-title">
-              <p class="title3" v-text="item.title"></p>
-              <p class="price3">
-                <b style="font-weight: normal" v-text="'￥' + item.price"></b>
-                <em>浏览 1252</em>
-                <i class="axm">安心买</i>
-                <i class="mobPro">M站商品</i>
-                <i class="ji f22">寄</i>
-                <i class="dan f22">担</i>
-              </p>
-            </div>
+        <transition name="fade">
+          <div :key="id" class="page-infinite-view">
+            <a href="#" v-for="(item,index) in checkedItem.list">
+              <div class="pro-list">
+                <div class="pro-pic">
+                  <img src="/images/p13.png">
+                  <div class="pro-cata">号</div>
+                </div>
+                <div class="pro-title">
+                  <p class="title3" v-text="item.title"></p>
+                  <p class="price3">
+                    <b style="font-weight: normal" v-text="'￥' + item.price"></b>
+                    <em>浏览 1252</em>
+                    <i class="axm">安心买</i>
+                    <i class="mobPro">M站商品</i>
+                    <i class="ji f22">寄</i>
+                    <i class="dan f22">担</i>
+                  </p>
+                </div>
+              </div>
+              <div style="clear: both"></div>
+            </a>
           </div>
-          <div style="clear: both"></div>
-        </a>
+        </transition>
       </ul>
       <p v-show="checkedItem.loading && !checkedItem.allLoaded " class="page-infinite-loading">
         <mt-spinner type="fading-circle"></mt-spinner>
@@ -64,11 +69,15 @@
         list: [],
         wrapperHeight: 0,
         onPost: false,
+        id: 0
       }
     },
     watch: {
       checkedSort: function (val, oldVal) {
         var self = this;
+        if (val.name.length > 0) {
+            self.id = self.id + 1;
+        }
         if (val.name.length > 0) {
           this.$nextTick(function () {
             document.body.scrollTop = this.checkedItem.scroll;
@@ -166,5 +175,24 @@
     display: inline-block;
     vertical-align: middle;
     margin-right: 5px;
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: all 1s ease;
+  }
+
+  .fade-enter {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+
+  .fade-leave-active {
+    opacity: 0;
+    transform: translateX(200px);
+  }
+
+  .page-infinite-view {
+    position: absolute;
+    width: 100%;
   }
 </style>
