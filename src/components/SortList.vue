@@ -120,7 +120,7 @@
               },
               sortWay: [
                 {
-                  name: "发布时间排序",
+                  name: "默认排序",
                   sortMap: {
                     create_time: '-'
                   }

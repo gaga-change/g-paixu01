@@ -13,17 +13,25 @@
         </div>
       </div>
     </div>
-    <div v-if="sortWayShow" class="divc showcata2 border-top" style="display: block"
-         @click="clickSortWay($event, 'sortWay')">
-      <ul>
-        <li v-for="(item,index) in sortWay"><a href="javascript:void(0);" :data-index="index" v-text="item.name"></a>
-        </li>
-        <!--<li><a href="javascript:;" selectid="1">热门排序</a></li>-->
-        <!--<li><a href="javascript:;" selectid="2">价格从低到高</a></li>-->
-        <!--<li><a href="javascript:;" selectid="3">价格从高到底</a></li>-->
-      </ul>
-      <input name="" type="hidden" value="" id="inputselect2"/>
-    </div>
+    <transition
+      enter-active-class="animated bounceInDown"
+      leave-active-class="animated fadeOut">
+      <div v-if="sortWayShow" class="divc showcata2 border-top" style="display: block"
+           @click="clickSortWay($event, 'sortWay')">
+        <!--<my-special-transition>-->
+        <ul>
+          <li v-for="(item,index) in sortWay" :key="item.name" data-index="index">
+            <a href="javascript:void(0);"
+               :data-index="index"
+               v-text="item.name"></a></li>
+          <!--<li><a href="javascript:;" selectid="1">热门排序</a></li>-->
+          <!--<li><a href="javascript:;" selectid="2">价格从低到高</a></li>-->
+          <!--<li><a href="javascript:;" selectid="3">价格从高到底</a></li>-->
+          <!--</my-special-transition>-->
+        </ul>
+        <input name="" type="hidden" value="" id="inputselect2"/>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -54,5 +62,5 @@
 </script>
 
 <style>
-
+@import "../assets/sort-animate.css";
 </style>
