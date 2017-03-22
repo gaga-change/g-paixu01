@@ -1,14 +1,14 @@
 <template>
-  <div class="top-header border-bottom ">
-    <div class="top-back">
-      <router-link :to="{name:'menu'}">返回</router-link>
+    <div class="top-header border-bottom ">
+        <div class="top-back">
+            <router-link :to="{name:'menu'}">返回</router-link>
+        </div>
+        <div class="top-bt f32" style="width: 100%">
+            <slot>地下城与勇士/电信二区/豪杰永生</slot>
+        </div>
     </div>
-    <div class="top-bt f32" style="width: 100%">
-      <slot>地下城与勇士/电信二区/豪杰永生</slot>
-    </div>
-  </div>
 </template>
 
 <script>
-  export default {}
+    export default {}
 </script>
